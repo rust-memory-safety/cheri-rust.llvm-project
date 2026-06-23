@@ -1964,17 +1964,17 @@ multiclass CheriAMOPat<string AtomicOp, string BaseInst> {
                    !cast<RVInst>(BaseInst#"_AQ_RL")>;
 }
 
-multiclass CheriAMOSubPat<string AtomicOp, string BaseInst> {
-  def : Pat<(!cast<PatFrag>(AtomicOp#"_monotonic") YGPR:$addr, (XLenVT GPR:$incr)),
-            (!cast<RVInst>(BaseInst) (SUB (XLenVT X0), (XLenVT GPR:$incr)), YGPR:$addr)>;
-  def : Pat<(!cast<PatFrag>(AtomicOp#"_acquire") YGPR:$addr, (XLenVT GPR:$incr)),
-            (!cast<RVInst>(BaseInst#"_AQ") (SUB (XLenVT X0), (XLenVT GPR:$incr)), YGPR:$addr)>;
-  def : Pat<(!cast<PatFrag>(AtomicOp#"_release") YGPR:$addr, (XLenVT GPR:$incr)),
-            (!cast<RVInst>(BaseInst#"_RL") (SUB (XLenVT X0), (XLenVT GPR:$incr)), YGPR:$addr)>;
-  def : Pat<(!cast<PatFrag>(AtomicOp#"_acq_rel") YGPR:$addr, (XLenVT GPR:$incr)),
-            (!cast<RVInst>(BaseInst#"_AQ_RL") (SUB (XLenVT X0), (XLenVT GPR:$incr)), YGPR:$addr)>;
-  def : Pat<(!cast<PatFrag>(AtomicOp#"_seq_cst") YGPR:$addr, (XLenVT GPR:$incr)),
-            (!cast<RVInst>(BaseInst#"_AQ_RL") (SUB (XLenVT X0), (XLenVT GPR:$incr)), YGPR:$addr)>;
+multiclass CheriAMOSubPat<string AtomicOp, string BaseInst, ValueType vt = XLenVT> {
+  def : Pat<(!cast<PatFrag>(AtomicOp#"_monotonic") YGPR:$addr, (vt GPR:$incr)),
+            (!cast<RVInst>(BaseInst) (SUB (vt X0), (vt GPR:$incr)), YGPR:$addr)>;
+  def : Pat<(!cast<PatFrag>(AtomicOp#"_acquire") YGPR:$addr, (vt GPR:$incr)),
+            (!cast<RVInst>(BaseInst#"_AQ") (SUB (vt X0), (vt GPR:$incr)), YGPR:$addr)>;
+  def : Pat<(!cast<PatFrag>(AtomicOp#"_release") YGPR:$addr, (vt GPR:$incr)),
+            (!cast<RVInst>(BaseInst#"_RL") (SUB (vt X0), (vt GPR:$incr)), YGPR:$addr)>;
+  def : Pat<(!cast<PatFrag>(AtomicOp#"_acq_rel") YGPR:$addr, (vt GPR:$incr)),
+            (!cast<RVInst>(BaseInst#"_AQ_RL") (SUB (vt X0), (vt GPR:$incr)), YGPR:$addr)>;
+  def : Pat<(!cast<PatFrag>(AtomicOp#"_seq_cst") YGPR:$addr, (vt GPR:$incr)),
+            (!cast<RVInst>(BaseInst#"_AQ_RL") (SUB (vt X0), (vt GPR:$incr)), YGPR:$addr)>;
 }
 
 class PseudoCheriAMO<RegisterClass ValTy=GPR>
@@ -2262,7 +2262,7 @@ defm : CheriAtomicStPat<atomic_store_32, CSW, GPR, XLenVT>;
 
 defm : CheriAMOPat<"atomic_swap_i32", "CAMOSWAP_W">;
 defm : CheriAMOPat<"atomic_load_add_i32", "CAMOADD_W">;
-defm : CheriAMOSubPat<"atomic_load_sub_i32", "CAMOADD_W">;
+defm : CheriAMOSubPat<"atomic_load_sub_i32", "CAMOADD_W", i32>;
 defm : CheriAMOPat<"atomic_load_and_i32", "CAMOAND_W">;
 defm : CheriAMOPat<"atomic_load_or_i32", "CAMOOR_W">;
 defm : CheriAMOPat<"atomic_load_xor_i32", "CAMOXOR_W">;
@@ -2333,7 +2333,7 @@ defm : CheriAtomicStPat<atomic_store_64, CSD, GPR, XLenVT>;
 
 defm : CheriAMOPat<"atomic_swap_i64", "CAMOSWAP_D">;
 defm : CheriAMOPat<"atomic_load_add_i64", "CAMOADD_D">;
-defm : CheriAMOSubPat<"atomic_load_sub_i64", "CAMOADD_D">;
+defm : CheriAMOSubPat<"atomic_load_sub_i64", "CAMOADD_D", i64>;
 defm : CheriAMOPat<"atomic_load_and_i64", "CAMOAND_D">;
 defm : CheriAMOPat<"atomic_load_or_i64", "CAMOOR_D">;
 defm : CheriAMOPat<"atomic_load_xor_i64", "CAMOXOR_D">;
