@@ -388,6 +388,8 @@ void RISCV::writePlt(uint8_t *buf, const Symbol &sym,
 }
 
 RelType RISCV::getDynRel(RelType type) const {
+  if (type == R_RISCV_CHERI_CAPABILITY_DEPRECATED)
+    return *symbolicCapRel;
   return type == symbolicRel || type == symbolicCapRel
              ? type
              : static_cast<RelType>(R_RISCV_NONE);
@@ -460,6 +462,7 @@ RelExpr RISCV::getRelExpr(const RelType type, const Symbol &s,
   case R_RISCV_SUB_ULEB128:
     return RE_RISCV_LEB128;
   case R_RISCV_CHERI_CAPABILITY:
+  case R_RISCV_CHERI_CAPABILITY_DEPRECATED:
   case R_RISCV_CHERI_CAPABILITY_CODE:
     return R_ABS_CAP;
   case R_RISCV_CHERI_TLS_TGOT_HI20:
@@ -796,6 +799,7 @@ void RISCV::relocate(uint8_t *loc, const Relocation &rel, uint64_t val) const {
   }
 
   case R_RISCV_CHERI_CAPABILITY:
+  case R_RISCV_CHERI_CAPABILITY_DEPRECATED:
   case R_RISCV_CHERI_CAPABILITY_CODE:
     // Write a word within the capability
     if (ctx.arg.is64)
