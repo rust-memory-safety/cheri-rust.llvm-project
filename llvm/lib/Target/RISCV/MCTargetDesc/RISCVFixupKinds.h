@@ -73,6 +73,15 @@ enum Fixups {
   // Size of the symbol.
   fixup_riscv_cheriot1_compartment_size,
 
+  // 20-bit fixup corresponding to %captab_pcrel_hi(foo) for AUIPCC.
+  fixup_riscv_captab_pcrel_hi20,
+  // 20-bit fixup corresponding to %tls_ie_pcrel_hi(foo) for AUIPCC in
+  // pure-capability initial-exec TLS.
+  fixup_riscv_tls_ie_captab_pcrel_hi20,
+  // 20-bit fixup corresponding to %tls_gd_pcrel_hi(foo) for AUIPCC in
+  // pure-capability global-dynamic TLS.
+  fixup_riscv_tls_gd_captab_pcrel_hi20,
+
   // Used as a sentinel, must be the last
   fixup_riscv_invalid,
   NumTargetFixupKinds = fixup_riscv_invalid - FirstTargetFixupKind

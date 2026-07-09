@@ -902,7 +902,7 @@ bool RISCVExpandPseudo::expandCapLoadGlobalCap(
 
   const auto &STI = MF->getSubtarget<RISCVSubtarget>();
   unsigned SecondOpcode = STI.is64Bit() ? RISCV::CLC_128 : RISCV::CLC_64;
-  return expandAuipccInstPair(MBB, MBBI, NextMBBI, RISCVII::MO_GOT_HI,
+  return expandAuipccInstPair(MBB, MBBI, NextMBBI, RISCVII::MO_CAPTAB_PCREL_HI,
                               SecondOpcode);
 }
 
@@ -918,7 +918,7 @@ bool RISCVExpandPseudo::expandCapLoadTLSIEAddress(
   if (MCTargetOptions::cheriTLSUseTGOT())
     FlagsHi = RISCVII::MO_TLS_TGOT_GOT_HI;
   else
-    FlagsHi = RISCVII::MO_TLS_GOT_HI;
+    FlagsHi = RISCVII::MO_TLS_IE_CAPTAB_PCREL_HI;
   return expandAuipccInstPair(MBB, MBBI, NextMBBI, FlagsHi, SecondOpcode);
 }
 
@@ -930,7 +930,7 @@ bool RISCVExpandPseudo::expandCapLoadTLSGDCap(
   if (MCTargetOptions::cheriTLSUseTGOT())
     FlagsHi = RISCVII::MO_TLS_TGOT_GD_HI;
   else
-    FlagsHi = RISCVII::MO_TLS_GD_HI;
+    FlagsHi = RISCVII::MO_TLS_GD_CAPTAB_PCREL_HI;
   return expandAuipccInstPair(MBB, MBBI, NextMBBI, FlagsHi,
                               RISCV::CIncOffsetImm);
 }

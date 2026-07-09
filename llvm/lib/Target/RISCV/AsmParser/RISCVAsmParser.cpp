@@ -4262,12 +4262,12 @@ void RISCVAsmParser::emitCapLoadGlobalCap(MCInst &Inst, SMLoc IDLoc,
   // GOT-indirect addressing of global symbols in the PC-relative ABI:
   //   clgc rdest, symbol
   // expands to
-  //   TmpLabel: AUIPCC cdest, %got_pcrel_hi(symbol)
+  //   TmpLabel: AUIPCC cdest, %captab_pcrel_hi(symbol)
   //             CLC cdest, %pcrel_lo(TmpLabel)(cdest)
   MCOperand DestReg = Inst.getOperand(0);
   const MCExpr *Symbol = Inst.getOperand(1).getExpr();
   unsigned SecondOpcode = isRV64() ? RISCV::CLC_128 : RISCV::CLC_64;
-  emitAuipccInstPair(DestReg, DestReg, Symbol, ELF::R_RISCV_GOT_HI20,
+  emitAuipccInstPair(DestReg, DestReg, Symbol, RISCV::S_CAPTAB_PCREL_HI,
                      SecondOpcode, IDLoc, Out);
 }
 
@@ -4277,7 +4277,7 @@ void RISCVAsmParser::emitCapLoadTLSIEAddress(MCInst &Inst, SMLoc IDLoc,
   // in initial-exec TLS model addressing of global symbols:
   //   cla.tls.ie rdest, symbol, tmp
   // expands to
-  //   TmpLabel: AUIPCC tmp, %tls_ie_pcrel_hi(symbol)
+  //   TmpLabel: AUIPCC tmp, %tls_ie_captab_pcrel_hi(symbol)
   //             CLx rdest, %pcrel_lo(TmpLabel)(tmp)
   MCOperand DestReg = Inst.getOperand(0);
   MCOperand TmpReg = MCOperand::createReg(convertGPRToYGPR(DestReg.getReg()));
@@ -4286,6 +4286,8 @@ void RISCVAsmParser::emitCapLoadTLSIEAddress(MCInst &Inst, SMLoc IDLoc,
   RISCV::Specifier SpecHi;
   if (RISCVABI::isCheriPureCapABI(ABI) && MCTargetOptions::cheriTLSUseTGOT())
     SpecHi = ELF::R_RISCV_CHERI_TLS_TGOT_GOT_HI20;
+  else if (RISCVABI::isCheriPureCapABI(ABI))
+    SpecHi = RISCV::S_TLS_IE_CAPTAB_PCREL_HI;
   else
     SpecHi = ELF::R_RISCV_TLS_GOT_HI20;
   emitAuipccInstPair(DestReg, TmpReg, Symbol, SpecHi, SecondOpcode, IDLoc, Out);
@@ -4297,13 +4299,15 @@ void RISCVAsmParser::emitCapLoadTLSGDCap(MCInst &Inst, SMLoc IDLoc,
   // used in global-dynamic TLS model addressing of global symbols:
   //   clc.tls.gd cdest, symbol
   // expands to
-  //   TmpLabel: AUIPCC rdest, %tls_gd_pcrel_hi(symbol)
+  //   TmpLabel: AUIPCC rdest, %tls_gd_captab_pcrel_hi(symbol)
   //             CINCOFFSET rdest, rdest, %pcrel_lo(TmpLabel)
   MCOperand DestReg = Inst.getOperand(0);
   const MCExpr *Symbol = Inst.getOperand(1).getExpr();
   RISCV::Specifier SpecHi;
   if (RISCVABI::isCheriPureCapABI(ABI) && MCTargetOptions::cheriTLSUseTGOT())
     SpecHi = ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20;
+  else if (RISCVABI::isCheriPureCapABI(ABI))
+    SpecHi = RISCV::S_TLS_GD_CAPTAB_PCREL_HI;
   else
     SpecHi = ELF::R_RISCV_TLS_GD_HI20;
   emitAuipccInstPair(DestReg, DestReg, Symbol, SpecHi, RISCV::CIncOffsetImm,

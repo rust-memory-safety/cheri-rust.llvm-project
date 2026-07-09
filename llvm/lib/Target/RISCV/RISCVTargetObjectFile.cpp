@@ -217,7 +217,8 @@ RISCVELFTargetObjectFile::lowerCheriCodeReference(const MCSymbol *Sym,
   const MCExpr *Expr = MCSymbolRefExpr::create(Sym, getContext());
   if (Addend != nullptr)
     Expr = MCBinaryExpr::createAdd(Expr, Addend, getContext());
-  Expr = MCSpecifierExpr::create(Expr, ELF::R_RISCV_CHERI_CAPABILITY_CODE,
-                                 getContext());
+  // The CheriBSD SDK linker in this checkout predates
+  // R_RISCV_CHERI_CAPABILITY_CODE and accepts the generic capability
+  // relocation for both data and code capability entries.
   return Expr;
 }

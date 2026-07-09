@@ -116,6 +116,12 @@ unsigned RISCVELFObjectWriter::getRelocType(const MCFixup &Fixup,
       return ELF::R_RISCV_CHERIOT1_COMPARTMENT_DATA_HI;
     case RISCV::fixup_riscv_cheriot1_compartment_lo_i:
       return ELF::R_RISCV_CHERIOT1_COMPARTMENT_LO_I;
+    case RISCV::fixup_riscv_captab_pcrel_hi20:
+      return ELF::R_RISCV_CHERI_CAPTAB_PCREL_HI20_DEPRECATED;
+    case RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20:
+      return ELF::R_RISCV_CHERI_TLS_IE_CAPTAB_PCREL_HI20_DEPRECATED;
+    case RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20:
+      return ELF::R_RISCV_CHERI_TLS_GD_CAPTAB_PCREL_HI20_DEPRECATED;
     }
   }
 

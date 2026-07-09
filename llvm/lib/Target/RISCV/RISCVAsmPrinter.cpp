@@ -1360,6 +1360,15 @@ static MCOperand lowerSymbolOperand(const MachineOperand &MO, MCSymbol *Sym,
   case RISCVII::MO_CHERIOT1_COMPARTMENT_SIZE:
     Kind = RISCV::S_CHERIOT_COMPARTMENT_SIZE;
     break;
+  case RISCVII::MO_CAPTAB_PCREL_HI:
+    Kind = RISCV::S_CAPTAB_PCREL_HI;
+    break;
+  case RISCVII::MO_TLS_IE_CAPTAB_PCREL_HI:
+    Kind = RISCV::S_TLS_IE_CAPTAB_PCREL_HI;
+    break;
+  case RISCVII::MO_TLS_GD_CAPTAB_PCREL_HI:
+    Kind = RISCV::S_TLS_GD_CAPTAB_PCREL_HI;
+    break;
   case RISCVII::MO_TGOT_TPREL_LO:
     Kind = ELF::R_RISCV_CHERI_TLS_TGOT_LO12_I;
     break;

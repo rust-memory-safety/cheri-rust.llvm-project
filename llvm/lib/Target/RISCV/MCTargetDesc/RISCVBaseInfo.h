@@ -362,6 +362,9 @@ enum {
   MO_CHERIOT1_COMPARTMENT_LO_I = 24,
   MO_CHERIOT1_COMPARTMENT_LO_S = 25,
   MO_CHERIOT1_COMPARTMENT_SIZE = 26,
+  MO_CAPTAB_PCREL_HI = 27,
+  MO_TLS_IE_CAPTAB_PCREL_HI = 28,
+  MO_TLS_GD_CAPTAB_PCREL_HI = 29,
 
   // Used to differentiate between target-specific "direct" flags and "bitmask"
   // flags. A machine operand can only have one "direct" flag, but can have

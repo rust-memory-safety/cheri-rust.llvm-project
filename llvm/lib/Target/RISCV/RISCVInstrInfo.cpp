@@ -3781,6 +3781,9 @@ RISCVInstrInfo::getSerializableDirectMachineOperandTargetFlags() const {
       {MO_CHERIOT1_COMPARTMENT_LO_I, "riscv-cheriot-compartment-lo-i"},
       {MO_CHERIOT1_COMPARTMENT_LO_S, "riscv-cheriot-compartment-lo-s"},
       {MO_CHERIOT1_COMPARTMENT_SIZE, "riscv-cheriot-compartment-size"},
+      {MO_CAPTAB_PCREL_HI, "riscv-captab-pcrel-hi"},
+      {MO_TLS_IE_CAPTAB_PCREL_HI, "riscv-tls-ie-captab-pcrel-hi"},
+      {MO_TLS_GD_CAPTAB_PCREL_HI, "riscv-tls-gd-captab-pcrel-hi"},
   };
   return ArrayRef(TargetFlags);
 }

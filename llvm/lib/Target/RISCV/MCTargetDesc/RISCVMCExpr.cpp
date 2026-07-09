@@ -46,11 +46,18 @@ RISCV::Specifier RISCV::parseSpecifierName(StringRef name, bool IsPurecap) {
       .Case("cheriot_compartment_lo_i", RISCV::S_CHERIOT_COMPARTMENT_LO_I)
       .Case("cheriot_compartment_lo_s", RISCV::S_CHERIOT_COMPARTMENT_LO_S)
       .Case("cheriot_compartment_size", RISCV::S_CHERIOT_COMPARTMENT_SIZE)
+      .Case("captab_pcrel_hi", RISCV::S_CAPTAB_PCREL_HI)
       .Case("code", ELF::R_RISCV_CHERI_CAPABILITY_CODE)
-      .Case("tls_ie_pcrel_hi", IsTGOT ? ELF::R_RISCV_CHERI_TLS_TGOT_GOT_HI20
-                                      : ELF::R_RISCV_TLS_GOT_HI20)
-      .Case("tls_gd_pcrel_hi", IsTGOT ? ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20
-                                      : ELF::R_RISCV_TLS_GD_HI20)
+      .Case("tls_ie_captab_pcrel_hi", RISCV::S_TLS_IE_CAPTAB_PCREL_HI)
+      .Case("tls_gd_captab_pcrel_hi", RISCV::S_TLS_GD_CAPTAB_PCREL_HI)
+      .Case("tls_ie_pcrel_hi",
+            IsTGOT ? ELF::R_RISCV_CHERI_TLS_TGOT_GOT_HI20
+                   : IsPurecap ? RISCV::S_TLS_IE_CAPTAB_PCREL_HI
+                               : ELF::R_RISCV_TLS_GOT_HI20)
+      .Case("tls_gd_pcrel_hi",
+            IsTGOT ? ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20
+                   : IsPurecap ? RISCV::S_TLS_GD_CAPTAB_PCREL_HI
+                               : ELF::R_RISCV_TLS_GD_HI20)
       .Case("tgot_tprel_lo", ELF::R_RISCV_CHERI_TLS_TGOT_LO12_I)
       .Case("tgot_tprel_hi", ELF::R_RISCV_CHERI_TLS_TGOT_HI20)
       .Case("tgot_tprel_add", ELF::R_RISCV_CHERI_TLS_TGOT_ADD)
@@ -119,6 +126,12 @@ StringRef RISCV::getSpecifierName(Specifier S) {
     return "pltpcrel";
   case RISCV::S_QC_ABS20:
     return "qc.abs20";
+  case RISCV::S_CAPTAB_PCREL_HI:
+    return "captab_pcrel_hi";
+  case RISCV::S_TLS_IE_CAPTAB_PCREL_HI:
+    return "tls_ie_captab_pcrel_hi";
+  case RISCV::S_TLS_GD_CAPTAB_PCREL_HI:
+    return "tls_gd_captab_pcrel_hi";
   case ELF::R_RISCV_CHERI_CAPABILITY_CODE:
     return "code";
   }

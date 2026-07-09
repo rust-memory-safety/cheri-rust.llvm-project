@@ -101,6 +101,10 @@ MCFixupKindInfo RISCVAsmBackend::getFixupKindInfo(MCFixupKind Kind) const {
       {"fixup_riscv_cheriot_compartment_lo_i", 0, 32, 0},
       {"fixup_riscv_cheriot_compartment_lo_s", 0, 32, 0},
       {"fixup_riscv_cheriot_compartment_size", 20, 12, 0},
+
+      {"fixup_riscv_captab_pcrel_hi20", 12, 20, 0},
+      {"fixup_riscv_tls_ie_captab_pcrel_hi20", 12, 20, 0},
+      {"fixup_riscv_tls_gd_captab_pcrel_hi20", 12, 20, 0},
   };
   static_assert((std::size(Infos)) == RISCV::NumTargetFixupKinds,
                 "Not all fixup kinds added to Infos array");
@@ -516,6 +520,9 @@ static uint64_t adjustFixupValue(const MCFixup &Fixup, uint64_t Value,
     llvm_unreachable("Unknown fixup kind!");
   case FK_Cap_8:
   case FK_Cap_16:
+  case RISCV::fixup_riscv_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20:
   case ELF::R_RISCV_CHERI_TLS_TGOT_HI20:
   case ELF::R_RISCV_CHERI_TLS_TGOT_LO12_I:
   case ELF::R_RISCV_CHERI_TLS_TGOT_ADD:
@@ -724,7 +731,10 @@ static const MCFixup *getPCRelHiFixup(const MCSpecifierExpr &Expr,
       continue;
     auto Kind = F.getKind();
     if (!mc::isRelocation(F.getKind())) {
-      if (Kind == RISCV::fixup_riscv_pcrel_hi20) {
+      if (Kind == RISCV::fixup_riscv_pcrel_hi20 ||
+          Kind == RISCV::fixup_riscv_captab_pcrel_hi20 ||
+          Kind == RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20 ||
+          Kind == RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20) {
         *DFOut = DF;
         return &F;
       }
@@ -923,6 +933,15 @@ bool RISCVAsmBackend::addReloc(const MCFragment &F, const MCFixup &Fixup,
   // always want to generate a relocation.
   bool NeedsRelax = Fixup.isLinkerRelaxable() &&
                     relaxableFixupNeedsRelocation(Fixup.getKind());
+  switch (Fixup.getKind()) {
+  default:
+    break;
+  case RISCV::fixup_riscv_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20:
+    IsResolved = false;
+    break;
+  }
   if (NeedsRelax)
     IsResolved = false;
 

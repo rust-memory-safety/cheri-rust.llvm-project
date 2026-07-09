@@ -149,6 +149,9 @@ static void addFixup(SmallVectorImpl<MCFixup> &Fixups, uint32_t Offset,
   case RISCV::fixup_riscv_qc_e_branch:
   case RISCV::fixup_riscv_qc_e_call_plt:
   case RISCV::fixup_riscv_nds_branch_10:
+  case RISCV::fixup_riscv_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20:
+  case RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20:
   case ELF::R_RISCV_CHERI_TLS_TGOT_GOT_HI20:
   case ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20:
     PCRel = true;
@@ -831,6 +834,15 @@ uint64_t RISCVMCCodeEmitter::getImmOpValue(const MCInst &MI, unsigned OpNo,
       break;
     case ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20:
       FixupKind = ELF::R_RISCV_CHERI_TLS_TGOT_GD_HI20;
+      break;
+    case RISCV::S_CAPTAB_PCREL_HI:
+      FixupKind = RISCV::fixup_riscv_captab_pcrel_hi20;
+      break;
+    case RISCV::S_TLS_IE_CAPTAB_PCREL_HI:
+      FixupKind = RISCV::fixup_riscv_tls_ie_captab_pcrel_hi20;
+      break;
+    case RISCV::S_TLS_GD_CAPTAB_PCREL_HI:
+      FixupKind = RISCV::fixup_riscv_tls_gd_captab_pcrel_hi20;
       break;
     case RISCV::S_CHERIOT_COMPARTMENT_SIZE:
       FixupKind = RISCV::fixup_riscv_cheriot1_compartment_size;
