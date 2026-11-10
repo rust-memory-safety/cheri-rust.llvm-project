@@ -150,6 +150,14 @@ def int_cheri_cap_address_get:
 def int_cheri_cap_address_set:
   Intrinsic<[llvm_cap_ty], [llvm_cap_ty, llvm_anyint_ty], [IntrNoMem, IntrWillReturn]>;
 
+// Coloured capabilities (PICASSO/FRESCO). cc_set_type stamps an otype ("colour")
+// on an unsealed capability; sealmap_set retires that colour by setting its bit
+// in the PVT selected by the capability's address (writes memory: not NoMem).
+def int_cheri_cap_cc_set_type:
+  Intrinsic<[llvm_cap_ty], [llvm_cap_ty, llvm_anyint_ty], [IntrNoMem, IntrWillReturn]>;
+def int_cheri_sealmap_set:
+  Intrinsic<[], [llvm_cap_ty], [IntrWriteMem, IntrHasSideEffects, IntrWillReturn]>;
+
 
 def int_cheri_cap_to_pointer:
   Intrinsic<[llvm_anyint_ty], [llvm_cap_ty, llvm_cap_ty], [IntrNoMem, IntrWillReturn]>;

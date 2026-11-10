@@ -409,6 +409,17 @@ def CBuildCap       : Cheri_rr<0x1d, "cbuildcap", YGPR, YGPR, YGPRX0IsDDC>;
 def CCopyType       : Cheri_rr<0x1e, "ccopytype", YGPR, YGPR>;
 let defsCanBeSealed = 1 in
 def CCSeal          : Cheri_rr<0x1f, "ccseal", YGPR, YGPR>;
+
+// Coloured capabilities (PICASSO/FRESCO). Encodings match the QEMU
+// insn32-cheri.decode: ccsettype funct7=0x15 (rd cap, rs1 cap, rs2 int);
+// csealmap.set funct7=0x22, single capability operand, rd = rs2 = x0.
+def CCSetType       : Cheri_rr<0x15, "ccsettype">;
+let hasSideEffects = 1, mayLoad = 0, mayStore = 1 in
+def CSealMapSet : RVInstR<0x22, 0, OPC_CHERI, (outs), (ins YGPR:$rs1),
+                          "csealmap.set", "$rs1"> {
+  let rd = 0;
+  let rs2 = 0;
+}
 let defsCanBeSealed = 1 in
 def CSealEntry      : Cheri_r<0x11, "csealentry", YGPR>;
 
@@ -1528,6 +1539,8 @@ def : PatYGPRGpr<int_cheri_cap_perms_and, CAndPerm>;
 def : PatYGPRGpr<int_cheri_cap_flags_set, CSetFlags>;
 def : PatYGPRGpr<int_cheri_cap_offset_set, CSetOffset>;
 def : PatYGPRGpr<int_cheri_cap_address_set, CSetAddr>;
+def : PatYGPRGpr<int_cheri_cap_cc_set_type, CCSetType>;
+def : Pat<(int_cheri_sealmap_set YGPR:$rs1), (CSealMapSet YGPR:$rs1)>;
 def : PatYGPRGpr<int_cheri_cap_high_set, CSetHigh>;
 def : PatYGPRGpr<cptradd, CIncOffset>;
 def : PatYGPRSimm12<cptradd, CIncOffsetImm>;
